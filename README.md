@@ -315,12 +315,12 @@ for each one.  For example, to report to chef-compliance and write to json file 
 
 ## Fetcher attribute
 
-To enable reporting to chef-visibility with profiles from chef-compliance, you need to have chef-server integrated with chef-compliance. You can then set the fetcher attribute to 'chef-server'.
+To enable reporting to chef-visibility with profiles from chef-compliance, you need to have chef-server integrated with chef-compliance. You can then set the fetcher attribute to 'chef-server-compliance'.
 This will allow the audit cookbook to fetch the profile from chef-compliance.  For example:
 
 ```ruby
 "audit": {
-  "fetcher": "chef-server",
+  "fetcher": "chef-server-compliance",
   "collector": "chef-visibility",
   "profiles": [
     {
@@ -330,6 +330,8 @@ This will allow the audit cookbook to fetch the profile from chef-compliance.  F
   ]
 }
 ```
+
+The fetcher attribute can also be set to 'chef-server-automate' in order to retrieve compliance profiles from Chef Automate through the Chef Server v12.11.0 or later.
 
 ## Relationship with Chef Audit Mode
 
