@@ -126,7 +126,7 @@ module ReportHelpers
       Chef::Log.warn("node['audit']['collector'] is deprecated and will be removed from the next major version of the cookbook. Please use node['audit']['reporter']")
       return handle_reporters(node['audit']['collector'])
     end
-    return handle_reporters(node['audit']['reporter'])
+    handle_reporters(node['audit']['reporter'])
   end
 
   # 'chef-server' has been deprecated in favour of 'chef-server-complinace'
@@ -136,7 +136,7 @@ module ReportHelpers
       Chef::Log.warn("The 'chef-server' fetcher is deprecated and will be removed from the next major version of the cookbook. Please use 'chef-server-compliance' moving forward.")
       return 'chef-server-compliance'
     end
-    return node['audit']['fetcher']
+    node['audit']['fetcher']
   end
 end
 
