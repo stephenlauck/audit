@@ -118,6 +118,26 @@ module ReportHelpers
     require libpath
     Chef::Config.send('report_handlers') << Chef::Handler::AuditReport.new
   end
+
+  # ['audit']['collector'] is the legacy reporter,
+  # deprecated in favour of ['audit']['reporter']
+  def get_reporters
+    if node['audit']['collector'] && node['audit']['reporter'].nil?
+      Chef::Log.warn("node['audit']['collector'] is deprecated and will be removed from the next major version of the cookbook. Please use node['audit']['reporter']")
+      return handle_reporters(node['audit']['collector'])
+    end
+    return handle_reporters(node['audit']['reporter'])
+  end
+
+  # 'chef-server' has been deprecated in favour of 'chef-server-complinace'
+  # after the introduction of the 'chef-server-visibility' fetcher
+  def get_fetcher
+    if node['audit']['fetcher'] == 'chef-server'
+      Chef::Log.warn("The 'chef-server' fetcher is deprecated and will be removed from the next major version of the cookbook. Please use 'chef-server-compliance' moving forward.")
+      return 'chef-server-compliance'
+    end
+    return node['audit']['fetcher']
+  end
 end
 
 ::Chef::Recipe.send(:include, ReportHelpers)

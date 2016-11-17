@@ -6,8 +6,8 @@ class Chef
     # Creates a compliance audit report
     class AuditReport < ::Chef::Handler
       def report
-        # ensure reporters is array
-        reporters = handle_reporters(node['audit']['collector'])
+        # get reporter(s) from attributes as an array
+        reporters = get_reporters
 
         # collect attribute values
         server = node['audit']['server']
@@ -23,8 +23,14 @@ class Chef
         # load inspec, supermarket bundle and compliance bundle
         load_needed_dependencies
 
+        # get fetcher from attributes
+        fetcher = get_fetcher
         # detect if we run in a chef client with chef server
-        load_chef_fetcher if reporters.include?('chef-server') || reporters.include?('chef-server-visibility') || node['audit']['fetcher'] == 'chef-server'
+        load_chef_fetcher if reporters.include?('chef-server') ||
+                             reporters.include?('chef-server-compliance') ||
+                             reporters.include?('chef-server-visibility') ||
+                             fetcher == 'chef-server-compliance' ||
+                             fetcher == 'chef-server-automate'
 
         # iterate through reporters
         reporters.each do |reporter|
@@ -161,7 +167,7 @@ class Chef
           else
             Chef::Log.warn "unable to determine chef-server url required by inspec report collector '#{reporter}'. Skipping..."
           end
-        elsif reporter == 'chef-server'
+        elsif reporter == 'chef-server-compliance' || reporter == 'chef-server' # chef-server is legacy reporter
           chef_url = server || base_chef_server_url
           chef_org = Chef::Config[:chef_server_url].split('/').last
           if chef_url
